@@ -7,4 +7,24 @@
     font-family: "joystick", sans-serif;
 }
 
-canvas { border: 1px solid black; }
+canvas {
+    border: 1px solid black;
+    padding: 0;
+}
+
+.options {
+    margin-bottom: 1.5rem;
+}
+
+#tabloidWidth, #letterWidth, #letterHeight, #tabloidHeight {
+    width: 5rem;
+}
+
+#generateButton {
+    padding: 1rem;
+}
+
+#tabloid {
+    display: grid;
+    gap: 1px;
+}
