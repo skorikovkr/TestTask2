@@ -47,6 +47,15 @@
     <div id="tabloid"></div>
 
     <script>
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
         randomColor.onchange = function () {
             pixelColor.disabled = randomColor.checked;
         };
@@ -79,13 +88,18 @@
                 while (i < id.data.length) {  // data - ОДНОМЕРНЫЕЙ массив с информацей о пикселах (rgba). проходится по изображению слева направо, сверху вниз
                     let cell = document.createElement("div");
                     cell.classList.add("cell");
-                    cell.style.backgroundColor = `rgba(${id.data[i]}, ${id.data[i+1]}, ${id.data[i+2]}, ${id.data[i+3]})`;
+                    if (id.data[i+3] !== 0) {
+                        if (randomColor.checked) {
+                            cell.style.backgroundColor = getRandomColor();
+                        } else {
+                            cell.style.backgroundColor = pixelColor.value;
+                        }
+                    }
                     tabloid.appendChild(cell);
                     i += 4;
                 }
             });
         }
-        tabloidCanvas.hidden = false;
     </script>
 </body>
 </html>
