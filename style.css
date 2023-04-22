@@ -1,0 +1,10 @@
+@font-face {
+    font-family: "joystick";
+    src: url("fonts/joystick-mono-pixel.otf");
+}
+
+* {
+    font-family: "joystick", sans-serif;
+}
+
+canvas { border: 1px solid black; }

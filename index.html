@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test task 2 - Бурсервис</title>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <p>Привет</p>
+    <canvas id="tabloid" width="10" height="10"></canvas>
+
+    <script>
+        const canvas = document.getElementById('tabloid');
+        const ctx = canvas.getContext('2d');
+        const font = new FontFace('joystick', 'url("fonts/joystick-mono-pixel.otf")');
+        font.load().then(function () {
+            ctx.font = "10px 'joystick'";
+            ctx.scale(1,1);
+
+            //ctx.fillText("H", 1, 1);
+            ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+            ctx.fillRect(0, 0, 5, 5);
+
+            ctx.setTransform();
+
+            var id = ctx.getImageData(0, 0, 10, 10);
+            let i = 0
+            while (i < id.data.length) {  // data - ОДНОМЕРНЫЕЙ массив с информацей о пикселах (rgba). проходится по изображению слева направо, сверху вниз
+                console.log(`${id.data[i]} ${id.data[i+1]} ${id.data[i+2]} ${id.data[i+3]}`);
+                i += 4;
+            }
+        });
+    </script>
+</body>
+</html>
