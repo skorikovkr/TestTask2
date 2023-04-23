@@ -70,56 +70,86 @@
             const canvas = document.getElementById('tabloidCanvas');
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-            if (autoFontSize.checked) {
-                letterHeight.value = tabloidHeight.value;
-            }
-
-            if (!letterWidth.value) {
-                letterWidth.value = letterHeight.value;
-            }
-
-            if (autoWidth.checked) {
-                canvas.width = letterWidth.value * wordInput.value.length;
-            } else
-                canvas.width = tabloidWidth.value;
-            if (autoFontSize.checked) {
-                letterWidth.value = canvas.width / wordInput.value.length;
-            }
-
             let widthRatio = 1;
-            if (letterWidth.value > 0)
-                widthRatio = letterWidth.value / letterHeight.value;
+            if (!autoFontSize.checked && !autoWidth.checked) {
+                ctx.font = letterHeight.value+"px monospace";
+                let metrics = ctx.measureText(wordInput.value);
+                let normalTextWidth = metrics.width;
+                if (!letterWidth.value)
+                    letterWidth.value = Math.round(normalTextWidth / wordInput.value.length);
+                let expectedTextWidth = wordInput.value.length * letterWidth.value;
+                widthRatio = expectedTextWidth / normalTextWidth;
 
-            canvas.height = tabloidHeight.value;
+                ctx.canvas.height = tabloidHeight.value;
+                ctx.canvas.width = tabloidWidth.value;
+                ctx.font = letterHeight.value+"px monospace";
+            }
+            if (!autoFontSize.checked && autoWidth.checked) {
+                ctx.font = letterHeight.value+"px monospace";
+                let metrics = ctx.measureText(wordInput.value);
+                let normalTextWidth = metrics.width;
+                if (!letterWidth.value)
+                    letterWidth.value = Math.round(normalTextWidth / wordInput.value.length);
+                let expectedTextWidth = wordInput.value.length * letterWidth.value;
+                widthRatio = expectedTextWidth / normalTextWidth;
+
+                ctx.canvas.height = tabloidHeight.value;
+                ctx.canvas.width = expectedTextWidth;
+                ctx.font = letterHeight.value+"px monospace";
+            }
+            if (autoFontSize.checked && !autoWidth.checked) {
+                letterHeight.value = tabloidHeight.value;
+                ctx.font = letterHeight.value+"px monospace";
+                let metrics = ctx.measureText(wordInput.value);
+                let normalTextWidth = metrics.width;
+                letterWidth.value = Math.round(tabloidWidth.value / wordInput.value.length);
+                let expectedTextWidth = wordInput.value.length * letterWidth.value;
+                widthRatio = expectedTextWidth / normalTextWidth;
+
+                ctx.canvas.height = tabloidHeight.value;
+                ctx.canvas.width = expectedTextWidth;
+                ctx.font = letterHeight.value+"px monospace";
+            }
+            if (autoFontSize.checked && autoWidth.checked) {
+                letterHeight.value = tabloidHeight.value;
+                ctx.font = letterHeight.value+"px monospace";
+                let metrics = ctx.measureText(wordInput.value);
+                let normalTextWidth = metrics.width;
+                letterWidth.value = Math.round(normalTextWidth / wordInput.value.length);
+                let expectedTextWidth = wordInput.value.length * letterWidth.value;
+                widthRatio = expectedTextWidth / normalTextWidth;
+
+                ctx.canvas.height = tabloidHeight.value;
+                ctx.canvas.width = expectedTextWidth;
+                ctx.font = letterHeight.value+"px monospace";
+            }
+
+            ctx.scale(widthRatio,1);
+            ctx.textBaseline = "top";
+            ctx.fillText(wordInput.value, 0, 0);
+
+            ctx.setTransform();
 
             tabloid.textContent = '';
             tabloid.style["grid-template-columns"] = "repeat(" + canvas.width + ",10px)";
             tabloid.style["grid-template-rows"] = "repeat(" + canvas.height + ",10px)";
 
-            const font = new FontFace('joystick', 'url("fonts/joystick-mono-pixel.otf")');
-            font.load().then(function () {
-                ctx.font = letterHeight.value+"px 'joystick'";
-                ctx.scale(widthRatio,1);
-                ctx.textBaseline = "top";
-                ctx.fillText(wordInput.value, 0, 0);
-
-                ctx.setTransform();
-                var id = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                let i = 0
-                while (i < id.data.length) {  // data - ОДНОМЕРНЫЕЙ массив с информацей о пикселах (rgba), информация о свете представляет из себя 4 подряд идущих элемента, являющихся компонентами цвета rgba. проходится по изображению слева направо, сверху вниз
-                    let cell = document.createElement("div");
-                    cell.classList.add("cell");
-                    if (id.data[i+3] !== 0) {  // пустая ячейка - альфа канал === 0
-                        if (randomColor.checked) {
-                            cell.style.backgroundColor = getRandomColor();
-                        } else {
-                            cell.style.backgroundColor = pixelColor.value;
-                        }
+            var id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let i = 0
+            while (i < id.data.length) {  // data - ОДНОМЕРНЫЕЙ массив с информацей о пикселах (rgba), информация о свете представляет из себя 4 подряд идущих элемента, являющихся компонентами цвета rgba. проходится по изображению слева направо, сверху вниз
+                let cell = document.createElement("div");
+                cell.classList.add("cell");
+                if (id.data[i+3] !== 0) {  // пустая ячейка - альфа канал === 0
+                    if (randomColor.checked) {
+                        cell.style.backgroundColor = getRandomColor();
+                    } else {
+                        cell.style.backgroundColor = pixelColor.value;
                     }
-                    tabloid.appendChild(cell);
-                    i += 4;
                 }
-            });
+                tabloid.appendChild(cell);
+                i += 4;
+            }
+
         }
     </script>
 </body>
