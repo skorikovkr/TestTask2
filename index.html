@@ -7,38 +7,40 @@
 </head>
 <body>
 
-    <h1>Задание "Таблоид".</h1>
-    <div class="options">
-        <label for="wordInput">Введите строку:</label>
-        <input type="text" id="wordInput" value="Текст text 123"/>
-    </div>
-    <div class="options">
-        <label for="pixelColor">Выберите цвет буквенных ячеек:</label>
-        <input type="color" id="pixelColor" name="pixelColor">
-        <br>
-        <input type="checkbox" id="randomColor" name="randomColor">
-        <label for="randomColor">Рандомайзер</label>
-    </div>
-    <div class="options">
-        <label for="tabloidWidth">Введите ширину таблоида:</label>
-        <input type="number" id="tabloidWidth" value="300"/>
-        <br>
-        <input type="checkbox" id="autoWidth" name="autoWidth">
-        <label for="autoWidth">Неограниченный рост</label>
-    </div>
-    <div class="options">
-        <label for="tabloidHeight">Введите высоту таблоида:</label>
-        <input type="number" id="tabloidHeight" value="20"/>
-        <br>
-        <label for="letterHeight">Введите высоту буквы:</label>
-        <input type="number" id="letterHeight" value="20"/>
-        <br>
-        <label for="letterWidth">Введите ширину буквы:</label>
-        <input type="number" id="letterWidth"/>
-        <br>
-        <input type="checkbox" id="autoFontSize" name="autoFontSize">
-        <label for="autoFontSize">Подгон букв под размер таблоида</label>
-    </div>
+    <main class="main">
+        <h1>Задание "Таблоид"</h1>
+        <div class="options">
+            <label for="wordInput">Введите строку:</label>
+            <input type="text" id="wordInput" value="お Привет TEXT 123"/>
+        </div>
+        <div class="options">
+            <label for="pixelColor">Выберите цвет буквенных ячеек:</label>
+            <input type="color" id="pixelColor" name="pixelColor" disabled>
+            <br>
+            <input type="checkbox" id="randomColor" name="randomColor" checked>
+            <label for="randomColor">Рандомайзер</label>
+        </div>
+        <div class="options">
+            <label for="tabloidWidth">Введите ширину таблоида:</label>
+            <input type="number" id="tabloidWidth" value="300" disabled/>
+            <br>
+            <input type="checkbox" id="autoWidth" name="autoWidth" checked>
+            <label for="autoWidth">Неограниченный рост</label>
+        </div>
+        <div class="options">
+            <label for="tabloidHeight">Введите высоту таблоида:</label>
+            <input type="number" id="tabloidHeight" value="40"/>
+            <br>
+            <label for="letterHeight">Введите высоту буквы:</label>
+            <input type="number" id="letterHeight" value="30"/>
+            <br>
+            <label for="letterWidth">Введите ширину буквы:</label>
+            <input type="number" id="letterWidth"/>
+            <br>
+            <input type="checkbox" id="autoFontSize" name="autoFontSize">
+            <label for="autoFontSize">Подгон букв под ширину таблоида</label>
+        </div>
+    </main>
 
     <button id="generateButton">Сгенерировать таблоид</button>
 
@@ -70,59 +72,32 @@
             const canvas = document.getElementById('tabloidCanvas');
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-            let widthRatio = 1;
+            if (autoFontSize.checked)
+                letterHeight.value = tabloidHeight.value;
+            ctx.font = letterHeight.value+"px monospace";
+            const metrics = ctx.measureText(wordInput.value);
+            const normalTextWidth = metrics.width;
             if (!autoFontSize.checked && !autoWidth.checked) {
-                ctx.font = letterHeight.value+"px monospace";
-                let metrics = ctx.measureText(wordInput.value);
-                let normalTextWidth = metrics.width;
                 if (!letterWidth.value)
                     letterWidth.value = Math.round(normalTextWidth / wordInput.value.length);
-                let expectedTextWidth = wordInput.value.length * letterWidth.value;
-                widthRatio = expectedTextWidth / normalTextWidth;
-
-                ctx.canvas.height = tabloidHeight.value;
                 ctx.canvas.width = tabloidWidth.value;
-                ctx.font = letterHeight.value+"px monospace";
             }
             if (!autoFontSize.checked && autoWidth.checked) {
-                ctx.font = letterHeight.value+"px monospace";
-                let metrics = ctx.measureText(wordInput.value);
-                let normalTextWidth = metrics.width;
                 if (!letterWidth.value)
                     letterWidth.value = Math.round(normalTextWidth / wordInput.value.length);
-                let expectedTextWidth = wordInput.value.length * letterWidth.value;
-                widthRatio = expectedTextWidth / normalTextWidth;
-
-                ctx.canvas.height = tabloidHeight.value;
-                ctx.canvas.width = expectedTextWidth;
-                ctx.font = letterHeight.value+"px monospace";
+                ctx.canvas.width = wordInput.value.length * letterWidth.value;
             }
             if (autoFontSize.checked && !autoWidth.checked) {
-                letterHeight.value = tabloidHeight.value;
-                ctx.font = letterHeight.value+"px monospace";
-                let metrics = ctx.measureText(wordInput.value);
-                let normalTextWidth = metrics.width;
                 letterWidth.value = Math.round(tabloidWidth.value / wordInput.value.length);
-                let expectedTextWidth = wordInput.value.length * letterWidth.value;
-                widthRatio = expectedTextWidth / normalTextWidth;
-
-                ctx.canvas.height = tabloidHeight.value;
-                ctx.canvas.width = expectedTextWidth;
-                ctx.font = letterHeight.value+"px monospace";
+                ctx.canvas.width = wordInput.value.length * letterWidth.value;
             }
             if (autoFontSize.checked && autoWidth.checked) {
-                letterHeight.value = tabloidHeight.value;
-                ctx.font = letterHeight.value+"px monospace";
-                let metrics = ctx.measureText(wordInput.value);
-                let normalTextWidth = metrics.width;
                 letterWidth.value = Math.round(normalTextWidth / wordInput.value.length);
-                let expectedTextWidth = wordInput.value.length * letterWidth.value;
-                widthRatio = expectedTextWidth / normalTextWidth;
-
-                ctx.canvas.height = tabloidHeight.value;
-                ctx.canvas.width = expectedTextWidth;
-                ctx.font = letterHeight.value+"px monospace";
+                ctx.canvas.width = wordInput.value.length * letterWidth.value;
             }
+            let widthRatio = wordInput.value.length * letterWidth.value / normalTextWidth;
+            ctx.canvas.height = tabloidHeight.value;
+            ctx.font = letterHeight.value+"px monospace";
 
             ctx.scale(widthRatio,1);
             ctx.textBaseline = "top";
@@ -136,10 +111,10 @@
 
             var id = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let i = 0
-            while (i < id.data.length) {  // data - ОДНОМЕРНЫЕЙ массив с информацей о пикселах (rgba), информация о свете представляет из себя 4 подряд идущих элемента, являющихся компонентами цвета rgba. проходится по изображению слева направо, сверху вниз
+            while (i < id.data.length) {
                 let cell = document.createElement("div");
                 cell.classList.add("cell");
-                if (id.data[i+3] !== 0) {  // пустая ячейка - альфа канал === 0
+                if (id.data[i+3] !== 0) {
                     if (randomColor.checked) {
                         cell.style.backgroundColor = getRandomColor();
                     } else {
@@ -149,7 +124,6 @@
                 tabloid.appendChild(cell);
                 i += 4;
             }
-
         }
     </script>
 </body>

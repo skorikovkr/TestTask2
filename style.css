@@ -1,20 +1,22 @@
-@font-face {
-    font-family: "joystick";
-    src: url("fonts/joystick-mono-pixel.otf");
-}
-
 * {
-    font-family: "Arial", sans-serif;
+    font-family: monospace;
+    font-size: 25px;
 }
 
 canvas {
     font-family: monospace;
-    border: 1px solid black;
-    padding: 0;
+}
+
+h1 {
+    font-size: 1.5rem;
 }
 
 .options {
     margin-bottom: 1.5rem;
+    margin-left: 1.5rem;
+}
+
+.options label {
 }
 
 #tabloidWidth, #letterWidth, #letterHeight, #tabloidHeight {
@@ -23,6 +25,9 @@ canvas {
 
 #generateButton {
     padding: 1rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
 }
 
 #tabloid {
